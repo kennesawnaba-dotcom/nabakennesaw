@@ -82,6 +82,7 @@
       <div class="sort-wrap">
         <label for="sort">Sort</label>
         <select class="sort-select" id="sort">
+          <option value="default">Default</option>
           <option value="az">Name A → Z</option>
           <option value="za">Name Z → A</option>
           <option value="grad-asc">Grad Year ↑</option>
@@ -113,7 +114,7 @@ const COLORS = [
   {bg:'#dceeff',fg:'#185fa5'},{bg:'#fef3d8',fg:'#854f0b'},
 ];
 
-let allMembers=[], activeGroup='all', searchVal='', sortVal='az';
+let allMembers=[], activeGroup='all', searchVal='', sortVal='default';
 
 function parseCSV(text) {
   const lines = text.trim().split('\n');
@@ -137,9 +138,19 @@ function getInitials(name){ return name.split(' ').map(w=>w[0]).slice(0,2).join(
 function toggleBio(btn){ const bio=btn.nextElementSibling; const open=bio.classList.toggle('open'); btn.innerHTML=open?'Hide info ↑':'See info →'; }
 window.toggleBio=toggleBio;
 
+function getPriority(m) {
+  const pos = (m['Position']||'').toLowerCase().trim();
+  if(pos.includes('president')) return 0;
+  if(pos === 'member' || pos === '') return 2;
+  return 1;
+}
+
 function sortMembers(arr) {
   return arr.slice().sort((a,b)=>{
-    if(sortVal==='az') return (a['Name']||'').localeCompare(b['Name']||'');
+    const pa=getPriority(a);
+    const pb=getPriority(b);
+    if(pa!==pb) return pa-pb;
+    if(sortVal==='default'||sortVal==='az') return (a['Name']||'').localeCompare(b['Name']||'');
     if(sortVal==='za') return (b['Name']||'').localeCompare(a['Name']||'');
     if(sortVal==='grad-asc') {
       const ya=parseInt(a['Graduation Year'])||9999;
@@ -238,4 +249,3 @@ loadData();
 </script>
 </body>
 </html>
- 
