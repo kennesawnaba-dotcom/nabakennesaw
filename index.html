@@ -138,11 +138,30 @@ function getInitials(name){ return name.split(' ').map(w=>w[0]).slice(0,2).join(
 function toggleBio(btn){ const bio=btn.nextElementSibling; const open=bio.classList.toggle('open'); btn.innerHTML=open?'Hide info ↑':'See info →'; }
 window.toggleBio=toggleBio;
 
+function extractYear(str) {
+  // Finds years like '24, 25-26, 2024, 2025 from a string
+  const short = str.match(/'(\d{2})/);
+  if(short) return 2000 + parseInt(short[1]);
+  const range = str.match(/(\d{2})-\d{2}/);
+  if(range) return 2000 + parseInt(range[1]);
+  const full = str.match(/\b(20\d{2})\b/);
+  if(full) return parseInt(full[1]);
+  return 9999;
+}
+
 function getPriority(m) {
-  const pos = (m['Position']||'').toLowerCase().trim();
-  if(pos.includes('president')) return 0;
-  if(pos === 'member' || pos === '') return 2;
+  const positions = (m['Position']||'').split(',').map(p=>p.trim().toLowerCase());
+  const hasPresident = positions.some(p=>p.includes('president'));
+  if(hasPresident) return 0;
+  const allMember = positions.every(p=>p==='' || p==='member');
+  if(allMember) return 2;
   return 1;
+}
+
+function getPresidentYear(m) {
+  const positions = (m['Position']||'').split(',').map(p=>p.trim());
+  const presPos = positions.find(p=>p.toLowerCase().includes('president'));
+  return presPos ? extractYear(presPos) : 9999;
 }
 
 function sortMembers(arr) {
@@ -150,6 +169,12 @@ function sortMembers(arr) {
     const pa=getPriority(a);
     const pb=getPriority(b);
     if(pa!==pb) return pa-pb;
+    // Within presidents, sort by year
+    if(pa===0) {
+      const ya=getPresidentYear(a);
+      const yb=getPresidentYear(b);
+      if(ya!==yb) return ya-yb;
+    }
     if(sortVal==='default'||sortVal==='az') return (a['Name']||'').localeCompare(b['Name']||'');
     if(sortVal==='za') return (b['Name']||'').localeCompare(a['Name']||'');
     if(sortVal==='grad-asc') {
