@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NABA Member Directory</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f7f6f2; --surface: #ffffff; --border: #e4e2db; --border-hover: #c8c5bc;
+    --text: #1a1a18; --muted: #6b6962; --hint: #a8a59e;
+    --accent: #1a1a18; --accent-fg: #ffffff; --linkedin: #0a66c2;
+    --badge-bg: #eeecea; --badge-fg: #6b6962; --radius: 14px;
+    --font-display: 'DM Serif Display', serif; --font-body: 'DM Sans', sans-serif;
+  }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; padding: 3rem 1.5rem; }
+  .page { max-width: 1100px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 3rem; }
+  header h1 { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3rem); font-weight: 400; letter-spacing: -0.01em; margin-bottom: 0.5rem; }
+  header p { font-size: 15px; color: var(--muted); }
+  .controls { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tab { background: none; border: 1px solid var(--border); border-radius: 999px; padding: 7px 20px; font-size: 14px; font-family: var(--font-body); font-weight: 500; cursor: pointer; color: var(--muted); transition: all .15s; }
+  .tab.active { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+  .tab:hover:not(.active) { background: var(--bg); border-color: var(--border-hover); color: var(--text); }
+  .search-wrap { display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 999px; padding: 7px 16px; background: var(--bg); }
+  .search-wrap input { border: none; background: none; font-size: 14px; font-family: var(--font-body); outline: none; color: var(--text); width: 180px; }
+  .search-wrap input::placeholder { color: var(--hint); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; display: flex; flex-direction: column; transition: border-color .2s, transform .2s; animation: fadeUp .4s ease both; }
+  .card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .photo { width: 76px; height: 76px; border-radius: 50%; object-fit: cover; object-position: top; border: 2px solid var(--border); margin-bottom: 1rem; display: block; }
+  .initials { width: 76px; height: 76px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 600; border: 2px solid var(--border); margin-bottom: 1rem; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; margin-bottom: 10px; background: var(--badge-bg); color: var(--badge-fg); }
+  .name { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .position { font-size: 14px; color: var(--muted); margin-bottom: 10px; }
+  .linkedin { font-size: 13px; color: var(--linkedin); text-decoration: none; display: block; margin-bottom: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .linkedin:hover { text-decoration: underline; }
+  .sep { border: none; border-top: 1px solid var(--border); margin: 0 0 12px; }
+  .see-btn { background: none; border: none; font-size: 12px; font-family: var(--font-body); font-weight: 600; letter-spacing: .07em; text-transform: uppercase; cursor: pointer; color: var(--hint); padding: 0; display: flex; align-items: center; gap: 5px; transition: color .15s; }
+  .see-btn:hover { color: var(--text); }
+  .bio { font-size: 13px; color: var(--muted); line-height: 1.65; margin-top: 10px; display: none; }
+  .bio.open { display: block; }
+  .state-msg { grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--hint); font-size: 15px; }
+  .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--hint); margin: 0 3px; animation: pulse 1.2s ease-in-out infinite; }
+  .dot:nth-child(2) { animation-delay: .2s; } .dot:nth-child(3) { animation-delay: .4s; }
+  @keyframes pulse { 0%,80%,100%{opacity:.2} 40%{opacity:1} }
+  footer { text-align: center; margin-top: 3rem; font-size: 13px; color: var(--hint); }
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1>Member Directory</h1>
+    <p>NABA Kennesaw</p>
+  </header>
+  <div class="controls">
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-group="all">All</button>
+      <button class="tab" data-group="alumni">Alumni</button>
+      <button class="tab" data-group="students">Students</button>
+      <button class="tab" data-group="advisors">Advisors</button>
+    </div>
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <circle cx="6.5" cy="6.5" r="5" stroke="#a8a59e" stroke-width="1.5"/>
+        <path d="M10.5 10.5L14 14" stroke="#a8a59e" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <input type="text" id="search" placeholder="Search members..." />
+    </div>
+  </div>
+  <div class="grid" id="grid">
+    <div class="state-msg"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+  </div>
+  <footer>
+    <p>Edit members in <a href="https://docs.google.com/spreadsheets/d/1VTK6QSVK8LM5f1mXy0KKS10vNeW8ZOQr8ugbUYrWsaM/edit" target="_blank">Google Sheets</a> — changes appear automatically.</p>
+  </footer>
+</div>
+<script>
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSZJNC54BRrXw7_mYpWJPV77YrPbSWw1zjTy4GtMxSoXicg2vi09y16xcBnsE62oeZGfbpV1oMYRMD7/pub?gid=954722969&single=true&output=csv';
+const PROXY = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(CSV_URL + '&t=' + Date.now());
+const COLORS = [
+  {bg:'#e8e4ff',fg:'#4c3fbf'},{bg:'#d4f0e6',fg:'#0f6e56'},
+  {bg:'#fde8df',fg:'#993c1d'},{bg:'#fbe0eb',fg:'#993556'},
+  {bg:'#dceeff',fg:'#185fa5'},{bg:'#fef3d8',fg:'#854f0b'},
+];
+let allMembers=[], activeGroup='all', searchVal='';
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(',').map(h=>h.replace(/^"|"$/g,'').trim());
+  return lines.slice(1).map(line => {
+    const vals=[]; let cur='', inQ=false;
+    for(let i=0;i<line.length;i++){
+      const ch=line[i];
+      if(ch==='"'){inQ=!inQ;}
+      else if(ch===','&&!inQ){vals.push(cur.trim());cur='';}
+      else{cur+=ch;}
+    }
+    vals.push(cur.trim());
+    const obj={};
+    headers.forEach((h,i)=>obj[h]=(vals[i]||'').replace(/^"|"$/g,'').trim());
+    return obj;
+  }).filter(m=>m['Name']&&m['Name'].length>0);
+}
+
+function initials(name){ return name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase(); }
+function toggleBio(btn){ const bio=btn.nextElementSibling; const open=bio.classList.toggle('open'); btn.innerHTML=open?'Hide info ↑':'See info →'; }
+window.toggleBio=toggleBio;
+
+function renderGrid(){
+  const grid=document.getElementById('grid');
+  let filtered=allMembers;
+  if(activeGroup!=='all') filtered=filtered.filter(m=>(m['Group']||'').toLowerCase()===activeGroup);
+  if(searchVal) filtered=filtered.filter(m=>(m['Name']||'').toLowerCase().includes(searchVal)||(m['Position']||'').toLowerCase().includes(searchVal));
+  if(!filtered.length){grid.innerHTML='<div class="state-msg">No members found.</div>';return;}
+  grid.innerHTML=filtered.map((m,i)=>{
+    const c=COLORS[allMembers.indexOf(m)%COLORS.length];
+    const ini=initials(m['Name']||'?');
+    const photoEl=m['Photo URL']
+      ?`<img class="photo" src="${m['Photo URL']}" alt="${m['Name']}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"  /><div class="initials" style="background:${c.bg};color:${c.fg};display:none">${ini}</div>`
+      :`<div class="initials" style="background:${c.bg};color:${c.fg}">${ini}</div>`;
+    const url=m['LinkedIn URL']||'';
+    const label=m['LinkedIn Label']||url;
+    const linkedinEl=url?`<a class="linkedin" href="${url}" target="_blank" rel="noopener">${label}</a>`:'';
+    const bioEl=m['Bio']?`<hr class="sep"/><button class="see-btn" onclick="toggleBio(this)">See info →</button><div class="bio">${m['Bio']}</div>`:'';
+    const group=m['Group']||'';
+    const badgeLabel=group.toLowerCase()==='students'?'Student':group.toLowerCase()==='advisors'?'Advisor':group;
+    return `<div class="card" style="animation-delay:${i*0.05}s">
+      ${photoEl}
+      ${group?`<span class="badge">${badgeLabel}</span>`:''}
+      <p class="name">${m['Name']}</p>
+      <p class="position">${m['Position']||''}</p>
+      ${linkedinEl}${bioEl}
+    </div>`;
+  }).join('');
+}
+
+async function loadData(){
+  const grid=document.getElementById('grid');
+  try {
+    let text;
+    try {
+      const r=await fetch(CSV_URL+'&t='+Date.now(),{cache:'no-cache'});
+      if(!r.ok) throw new Error();
+      text=await r.text();
+    } catch {
+      const r=await fetch(PROXY);
+      if(!r.ok) throw new Error();
+      text=await r.text();
+    }
+    allMembers=parseCSV(text);
+    if(allMembers.length===0) throw new Error('empty');
+    renderGrid();
+  } catch(e){
+    grid.innerHTML='<div class="state-msg">Could not load member data.<br><small>Make sure the Google Sheet is published to the web (File → Share → Publish to web).</small></div>';
+  }
+}
+
+document.getElementById('tabs').addEventListener('click',e=>{
+  const tab=e.target.closest('.tab'); if(!tab) return;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active'); activeGroup=tab.dataset.group; renderGrid();
+});
+document.getElementById('search').addEventListener('input',e=>{searchVal=e.target.value.toLowerCase().trim();renderGrid();});
+loadData();
+</script>
+</body>
+</html>
