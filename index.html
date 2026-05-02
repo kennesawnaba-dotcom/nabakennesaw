@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -112,7 +112,11 @@ window.toggleBio=toggleBio;
 function renderGrid(){
   const grid=document.getElementById('grid');
   let filtered=allMembers;
-  if(activeGroup!=='all') filtered=filtered.filter(m=>(m['Group']||'').toLowerCase()===activeGroup);
+  if(activeGroup!=='all'){
+    const groupMap={'alumni':'alumni','students':'student','advisors':'advisor'};
+    const target=groupMap[activeGroup]||activeGroup;
+    filtered=filtered.filter(m=>(m['Group']||'').toLowerCase()===target);
+  }
   if(searchVal) filtered=filtered.filter(m=>(m['Name']||'').toLowerCase().includes(searchVal)||(m['Position']||'').toLowerCase().includes(searchVal));
   if(!filtered.length){grid.innerHTML='<div class="state-msg">No members found.</div>';return;}
   grid.innerHTML=filtered.map((m,i)=>{
@@ -126,7 +130,8 @@ function renderGrid(){
     const linkedinEl=url?`<a class="linkedin" href="${url}" target="_blank" rel="noopener">${label}</a>`:'';
     const bioEl=m['Bio']?`<hr class="sep"/><button class="see-btn" onclick="toggleBio(this)">See info →</button><div class="bio">${m['Bio']}</div>`:'';
     const group=m['Group']||'';
-    const badgeLabel=group.toLowerCase()==='students'?'Student':group.toLowerCase()==='advisors'?'Advisor':group;
+    const gl=group.toLowerCase();
+    const badgeLabel=gl==='students'||gl==='student'?'Student':gl==='advisors'||gl==='advisor'?'Advisor':group;
     return `<div class="card" style="animation-delay:${i*0.05}s">
       ${photoEl}
       ${group?`<span class="badge">${badgeLabel}</span>`:''}
