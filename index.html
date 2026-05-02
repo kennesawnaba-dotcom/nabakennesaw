@@ -19,30 +19,30 @@
   header { text-align: center; margin-bottom: 3rem; }
   header h1 { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3rem); font-weight: 400; letter-spacing: -0.01em; margin-bottom: 0.5rem; }
   header p { font-size: 15px; color: var(--muted); }
- 
+
   .controls { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; }
   .controls-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .controls-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
- 
+
   .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
   .tab { background: none; border: 1px solid var(--border); border-radius: 999px; padding: 7px 20px; font-size: 14px; font-family: var(--font-body); font-weight: 500; cursor: pointer; color: var(--muted); transition: all .15s; }
   .tab.active { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
   .tab:hover:not(.active) { background: var(--bg); border-color: var(--border-hover); color: var(--text); }
- 
+
   .search-wrap { display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 999px; padding: 7px 16px; background: var(--bg); }
   .search-wrap input { border: none; background: none; font-size: 14px; font-family: var(--font-body); outline: none; color: var(--text); width: 160px; }
   .search-wrap input::placeholder { color: var(--hint); }
- 
+
   .sort-wrap { display: flex; align-items: center; gap: 6px; }
   .sort-wrap label { font-size: 13px; color: var(--muted); white-space: nowrap; }
   .sort-select { border: 1px solid var(--border); border-radius: 999px; padding: 7px 14px; font-size: 14px; font-family: var(--font-body); background: var(--bg); color: var(--text); cursor: pointer; outline: none; appearance: none; padding-right: 28px; background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23a8a59e' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
   .sort-select:hover { border-color: var(--border-hover); }
- 
+
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; display: flex; flex-direction: column; transition: border-color .2s, transform .2s; animation: fadeUp .35s ease both; }
   .card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
- 
+
   .photo { width: 76px; height: 76px; border-radius: 50%; object-fit: cover; object-position: top; border: 2px solid var(--border); margin-bottom: 1rem; display: block; }
   .initials { width: 76px; height: 76px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 600; border: 2px solid var(--border); margin-bottom: 1rem; }
   .badge { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; margin-bottom: 10px; background: var(--badge-bg); color: var(--badge-fg); }
@@ -68,7 +68,7 @@
     <h1>Member Directory</h1>
     <p>NABA Kennesaw</p>
   </header>
- 
+
   <div class="controls">
     <div class="controls-left">
       <div class="tabs" id="tabs">
@@ -97,24 +97,24 @@
       </div>
     </div>
   </div>
- 
+
   <div class="grid" id="grid">
     <div class="state-msg"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
   </div>
 </div>
- 
+
 <script>
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSZJNC54BRrXw7_mYpWJPV77YrPbSWw1zjTy4GtMxSoXicg2vi09y16xcBnsE62oeZGfbpV1oMYRMD7/pub?gid=954722969&single=true&output=csv';
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRhhdkdUKfWd6tPD4xOXmRf8gViVVgoXuc_hWDoH4F2490W5RKYfnsfP9oDPuDQXA94AD-4Kl3nuJPM/pub?gid=238382791&single=true&output=csv';
 const PROXY = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(CSV_URL + '&t=' + Date.now());
- 
+
 const COLORS = [
   {bg:'#e8e4ff',fg:'#4c3fbf'},{bg:'#d4f0e6',fg:'#0f6e56'},
   {bg:'#fde8df',fg:'#993c1d'},{bg:'#fbe0eb',fg:'#993556'},
   {bg:'#dceeff',fg:'#185fa5'},{bg:'#fef3d8',fg:'#854f0b'},
 ];
- 
+
 let allMembers=[], activeGroup='all', searchVal='', sortVal='az';
- 
+
 function parseCSV(text) {
   const lines = text.trim().split('\n');
   const headers = lines[0].split(',').map(h=>h.replace(/^"|"$/g,'').trim());
@@ -132,11 +132,11 @@ function parseCSV(text) {
     return obj;
   }).filter(m=>m['Name']&&m['Name'].length>0);
 }
- 
+
 function getInitials(name){ return name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?'; }
 function toggleBio(btn){ const bio=btn.nextElementSibling; const open=bio.classList.toggle('open'); btn.innerHTML=open?'Hide info ↑':'See info →'; }
 window.toggleBio=toggleBio;
- 
+
 function sortMembers(arr) {
   return arr.slice().sort((a,b)=>{
     if(sortVal==='az') return (a['Name']||'').localeCompare(b['Name']||'');
@@ -144,21 +144,23 @@ function sortMembers(arr) {
     if(sortVal==='grad-asc') {
       const ya=parseInt(a['Graduation Year'])||9999;
       const yb=parseInt(b['Graduation Year'])||9999;
-      return ya-yb;
+      if(ya!==yb) return ya-yb;
+      return (a['Name']||'').localeCompare(b['Name']||'');
     }
     if(sortVal==='grad-desc') {
       const ya=parseInt(a['Graduation Year'])||0;
       const yb=parseInt(b['Graduation Year'])||0;
-      return yb-ya;
+      if(ya!==yb) return yb-ya;
+      return (a['Name']||'').localeCompare(b['Name']||'');
     }
     return 0;
   });
 }
- 
+
 function renderGrid(){
   const grid=document.getElementById('grid');
   let filtered=allMembers;
- 
+
   if(activeGroup!=='all'){
     const groupMap={'alumni':'alumni','students':'student','advisors':'advisor'};
     const target=groupMap[activeGroup]||activeGroup;
@@ -169,11 +171,11 @@ function renderGrid(){
     (m['Position']||'').toLowerCase().includes(searchVal)||
     (m['Graduation Year']||'').includes(searchVal)
   );
- 
+
   filtered=sortMembers(filtered);
- 
+
   if(!filtered.length){grid.innerHTML='<div class="state-msg">No members found.</div>';return;}
- 
+
   grid.innerHTML=filtered.map((m,i)=>{
     const c=COLORS[allMembers.indexOf(m)%COLORS.length];
     const ini=getInitials(m['Name']||'?');
@@ -188,7 +190,7 @@ function renderGrid(){
     const gl=group.toLowerCase();
     const badgeLabel=gl==='students'||gl==='student'?'Student':gl==='advisors'||gl==='advisor'?'Advisor':group;
     const gradYear=m['Graduation Year']?`<p class="grad-year">Class of ${m['Graduation Year']}</p>`:'';
- 
+
     return `<div class="card" style="animation-delay:${i*0.04}s">
       ${photoEl}
       ${group?`<span class="badge">${badgeLabel}</span>`:''}
@@ -199,7 +201,7 @@ function renderGrid(){
     </div>`;
   }).join('');
 }
- 
+
 async function loadData(){
   try {
     let text;
@@ -219,7 +221,7 @@ async function loadData(){
     document.getElementById('grid').innerHTML='<div class="state-msg">Could not load member data. Make sure the Google Sheet is published to the web.</div>';
   }
 }
- 
+
 document.getElementById('tabs').addEventListener('click',e=>{
   const tab=e.target.closest('.tab'); if(!tab) return;
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -231,7 +233,7 @@ document.getElementById('search').addEventListener('input',e=>{
 document.getElementById('sort').addEventListener('change',e=>{
   sortVal=e.target.value; renderGrid();
 });
- 
+
 loadData();
 </script>
 </body>
