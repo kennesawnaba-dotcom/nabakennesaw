@@ -165,32 +165,34 @@ function getPresidentYear(m) {
 }
 
 function sortMembers(arr) {
-  return arr.slice().sort((a,b)=>{
-    const pa=getPriority(a);
-    const pb=getPriority(b);
-    if(pa!==pb) return pa-pb;
-    // Within presidents, sort by year
-    if(pa===0) {
-      const ya=getPresidentYear(a);
-      const yb=getPresidentYear(b);
-      if(ya!==yb) return ya-yb;
-    }
-    if(sortVal==='default'||sortVal==='az') return (a['Name']||'').localeCompare(b['Name']||'');
-    if(sortVal==='za') return (b['Name']||'').localeCompare(a['Name']||'');
-    if(sortVal==='grad-asc') {
-      const ya=parseInt(a['Graduation Year'])||9999;
-      const yb=parseInt(b['Graduation Year'])||9999;
-      if(ya!==yb) return ya-yb;
+  if(sortVal==='default') {
+    return arr.slice().sort((a,b)=>{
+      const pa=getPriority(a);
+      const pb=getPriority(b);
+      if(pa!==pb) return pa-pb;
+      if(pa===0) {
+        const ya=getPresidentYear(a);
+        const yb=getPresidentYear(b);
+        if(ya!==yb) return ya-yb;
+      }
       return (a['Name']||'').localeCompare(b['Name']||'');
-    }
-    if(sortVal==='grad-desc') {
-      const ya=parseInt(a['Graduation Year'])||0;
-      const yb=parseInt(b['Graduation Year'])||0;
-      if(ya!==yb) return yb-ya;
-      return (a['Name']||'').localeCompare(b['Name']||'');
-    }
-    return 0;
+    });
+  }
+  if(sortVal==='az') return arr.slice().sort((a,b)=>(a['Name']||'').localeCompare(b['Name']||''));
+  if(sortVal==='za') return arr.slice().sort((a,b)=>(b['Name']||'').localeCompare(a['Name']||''));
+  if(sortVal==='grad-asc') return arr.slice().sort((a,b)=>{
+    const ya=parseInt(a['Graduation Year'])||9999;
+    const yb=parseInt(b['Graduation Year'])||9999;
+    if(ya!==yb) return ya-yb;
+    return (a['Name']||'').localeCompare(b['Name']||'');
   });
+  if(sortVal==='grad-desc') return arr.slice().sort((a,b)=>{
+    const ya=parseInt(a['Graduation Year'])||0;
+    const yb=parseInt(b['Graduation Year'])||0;
+    if(ya!==yb) return yb-ya;
+    return (a['Name']||'').localeCompare(b['Name']||'');
+  });
+  return arr;
 }
 
 function renderGrid(){
