@@ -687,7 +687,7 @@ const ADMIN_EMAIL = 'kennesawnaba@gmail.com';
 
 // Google Apps Script Web App URL — paste yours here after setup
 // See the instructions panel below for how to get this URL
-let APPS_SCRIPT_URL = '';
+let APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz9h2olOWvvSXaMYCuU14_UC34lQ5WXlEvobHKaPoX8CTMSFMXmmk5T1SexBcUfneoR/exec';
 
 // ─────────────────────────────────────────
 // STATE
@@ -954,7 +954,7 @@ function showAppsScriptBanner() {
         <li>Click <strong>Deploy → New deployment → Web app</strong></li>
         <li>Set <em>Execute as: Me</em> and <em>Who has access: Anyone</em></li>
         <li>Click <strong>Deploy</strong> and copy the Web App URL</li>
-        <li>Open this HTML file in a text editor, find <code style="color:var(--gold);">let APPS_SCRIPT_URL = '';</code> and paste your URL between the quotes</li>
+        <li>Open this HTML file in a text editor, find <code style="color:var(--gold);">let APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz9h2olOWvvSXaMYCuU14_UC34lQ5WXlEvobHKaPoX8CTMSFMXmmk5T1SexBcUfneoR/exec';</code> and paste your URL between the quotes</li>
         <li>Redeploy to Netlify</li>
       </ol>
       <div style="margin-top:1rem;background:rgba(0,0,0,0.3);border-radius:3px;padding:1rem;font-family:monospace;font-size:0.72rem;color:#a0b8a8;white-space:pre-wrap;max-height:200px;overflow-y:auto;">${getAppsScriptCode()}</div>
